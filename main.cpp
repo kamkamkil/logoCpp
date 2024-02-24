@@ -1,5 +1,8 @@
+#include "interpreter.cpp"
+
 int main(int argc, char const *argv[])
 {
-    /* code */
+    Interpreter in("../testFile.txt");
+    in.interpret();
     return 0;
 }

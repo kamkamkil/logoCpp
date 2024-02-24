@@ -1,11 +1,12 @@
 #include <iostream>
 
-class renderer
+class Renderer
 {
 private:
     /* data */
 public:
-    renderer(/* args */);
+    Renderer(/* args */);
+    ~Renderer();
     void goUp(float dis);
     void goDown(float dis);
     void goRight(float dis);
@@ -14,53 +15,65 @@ public:
     void setAngle(float angle);
     void penUp();
     void penDown();
-    ~renderer();
+    static Renderer *get();
+private:
+    static Renderer* renderer;
 };
 
-renderer::renderer(/* args */)
+Renderer::Renderer(/* args */)
 {
 }
 
-void renderer::goUp(float dis)
+void Renderer::goUp(float dis)
 {
     std::cout << "go up " << dis << std::endl;
 }
 
-void renderer::goDown(float dis)
+void Renderer::goDown(float dis)
 {
     std::cout << "go down " << dis << std::endl;
 }
 
-void renderer::goRight(float dis)
+void Renderer::goRight(float dis)
 {
     std::cout << "go right " << dis << std::endl;
 }
 
-void renderer::goLeft(float dis)
+void Renderer::goLeft(float dis)
 {
     std::cout << "go left " << dis << std::endl;
 }
 
-void renderer::rotate(float angle)
+void Renderer::rotate(float angle)
 {
     std::cout << "rotate " << angle << std::endl;
 }
 
-void renderer::setAngle(float angle)
+void Renderer::setAngle(float angle)
 {
     std::cout << "rotate " << angle << std::endl;
 }
 
-void renderer::penUp()
+void Renderer::penUp()
 {
     std::cout <<"pen up" <<std::endl; 
 }
 
-void renderer::penDown()
+void Renderer::penDown()
 {
     std::cout <<"pen up" <<std::endl; 
 }
 
-renderer::~renderer()
+Renderer *Renderer::get()
+{
+    if (renderer == nullptr)
+    {
+        renderer = new Renderer;
+    }
+    
+    return renderer;
+}
+
+Renderer::~Renderer()
 {
 }
