@@ -40,13 +40,14 @@ public:
 	ExampleWindow();
 
 protected:
-	Renderer m_area;
+	Renderer* m_area;
 };
 
 ExampleWindow::ExampleWindow()
 {
+	m_area = Renderer::get();
 	set_title("DrawingArea");
-	set_child(m_area);
+	set_child(*m_area);
 }
 
 Renderer::Renderer(/* args */)
@@ -134,6 +135,8 @@ Renderer *Renderer::get()
 
 int Renderer::main(int argc, char **argv)
 {
+	std::cout << "main!!!!" << std::endl;
+
 	auto app = Gtk::Application::create("org.gtkmm.example");
 
 	return app->make_window_and_run<ExampleWindow>(argc, argv);
