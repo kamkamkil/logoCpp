@@ -135,10 +135,21 @@ void Interpreter::interpret()
             try
             {
                 int number = std::stoi(word);
+                auto renderer = Renderer::get();
                 switch (c)
                 {
                     case command::fd:
-                        Renderer::get()->goUp(number);
+                        renderer->goUp(number);
+                        break;
+                    case command::bk:
+                        renderer->goDown(number);
+                        break;
+                    case command::lt:
+                        renderer->goLeft(number);
+                        Renderer::get()->main(0,nullptr);
+                        break;
+                    case command::rt:
+                        renderer->goRight(number);
                         break;
                 }
             }

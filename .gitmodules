@@ -1,0 +1,3 @@
+[submodule "cairomm"]
+	path = cairomm
+	url = https://github.com/CMakePorts/cairomm.git

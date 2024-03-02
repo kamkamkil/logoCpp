@@ -2,7 +2,7 @@
 
 int main(int argc, char const *argv[])
 {
-    Interpreter in("../testFile.txt");
+    Interpreter in("../../testFile.txt");
     in.interpret();
     return 0;
 }
