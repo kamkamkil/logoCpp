@@ -146,6 +146,7 @@ void Interpreter::interpret()
                         break;
                     case command::lt:
                         renderer->goLeft(number);
+                        
                         Renderer::get()->main(0,nullptr);
                         break;
                     case command::rt:

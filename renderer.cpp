@@ -12,10 +12,10 @@ private:
 public:
 	Renderer(/* args */);
 	~Renderer();
-	void goUp(float dis);
-	void goDown(float dis);
-	void goRight(float dis);
-	void goLeft(float dis);
+	void goUp(int dis);
+	void goDown(int dis);
+	void goRight(int dis);
+	void goLeft(int dis);
 	void rotate(float angle);
 	void setAngle(float angle);
 	void penUp();
@@ -34,21 +34,24 @@ private:
 };
 
 Renderer *Renderer::renderer = nullptr;
-class ExampleWindow : public Gtk::Window
-{
-public:
-	ExampleWindow();
+// class ExampleWindow : public Gtk::Window
+// {
+// public:
+// 	ExampleWindow();
 
-protected:
-	Renderer* m_area;
-};
+// protected:
+// 	Renderer* m_area;
+// };
 
-ExampleWindow::ExampleWindow()
-{
-	m_area = Renderer::get();
-	set_title("DrawingArea");
-	set_child(*m_area);
-}
+// ExampleWindow::ExampleWindow()
+// {
+// m_area = Renderer::get();
+// set_title("DrawingArea");
+// std::cout << "1" << std::endl;
+// set_child(*m_area);
+// std::cout << "2" << std::endl;
+
+// }
 
 Renderer::Renderer(/* args */)
 {
@@ -57,36 +60,36 @@ Renderer::Renderer(/* args */)
 						  { context->move_to(0, 0); });
 }
 
-void Renderer::goUp(float dis)
+void Renderer::goUp(int dis)
 {
-	renderQueue.push_back([&](Cairo::RefPtr<Cairo::Context> context)
-						  { context->line_to(currentX + dis, currentY);
+	renderQueue.push_back([&,dis](Cairo::RefPtr<Cairo::Context> context)
+						  {std::cout << "go up " << dis << std::endl; 
+						  context->line_to(currentX + dis, currentY);
 												currentX += dis; });
-	std::cout << "go up " << dis << std::endl;
 }
 
-void Renderer::goDown(float dis)
+void Renderer::goDown(int dis)
 {
-	renderQueue.push_back([&](Cairo::RefPtr<Cairo::Context> context)
-						  { context->line_to(currentX - dis, currentY);
+	renderQueue.push_back([&,dis](Cairo::RefPtr<Cairo::Context> context)
+						  {std::cout << "go down " << dis << std::endl; 
+						  context->line_to(currentX - dis, currentY);
 												currentX -= dis; });
-	std::cout << "go down " << dis << std::endl;
 }
 
-void Renderer::goRight(float dis)
+void Renderer::goRight(int dis)
 {
-	renderQueue.push_back([&](Cairo::RefPtr<Cairo::Context> context)
-						  { context->line_to(currentX, currentY + dis);
+	renderQueue.push_back([&,dis](Cairo::RefPtr<Cairo::Context> context)
+						  {std::cout << "go right " << dis << std::endl;
+						   context->line_to(currentX, currentY + dis);
 												currentY += dis; });
-	std::cout << "go right " << dis << std::endl;
 }
 
-void Renderer::goLeft(float dis)
+void Renderer::goLeft(int  dis)
 {
-	renderQueue.push_back([&](Cairo::RefPtr<Cairo::Context> context)
-						  { context->line_to(currentX, currentY - dis);
+	renderQueue.push_back([&,dis](Cairo::RefPtr<Cairo::Context> context)
+						  { std::cout << "go left " << dis << std::endl;
+						  context->line_to(currentX, currentY - dis);
 												currentY -= dis; });
-	std::cout << "go left " << dis << std::endl;
 }
 
 void Renderer::rotate(float angle)
@@ -135,11 +138,7 @@ Renderer *Renderer::get()
 
 int Renderer::main(int argc, char **argv)
 {
-	std::cout << "main!!!!" << std::endl;
-
-	auto app = Gtk::Application::create("org.gtkmm.example");
-
-	return app->make_window_and_run<ExampleWindow>(argc, argv);
+	return 0;
 }
 
 Renderer::~Renderer()
