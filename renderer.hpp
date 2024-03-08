@@ -21,7 +21,6 @@ public:
 	void penUp();
 	void penDown();
 	static Renderer *get();
-	int main(int argc, char **argv);
 
 protected:
 	void render(const Cairo::RefPtr<Cairo::Context> &cr, int width, int height);
@@ -29,8 +28,8 @@ protected:
 private:
 	static Renderer *renderer;
 	std::vector<std::function<void(Cairo::RefPtr<Cairo::Context>)>> renderQueue;
-	double currentX = 0;
-	double currentY = 0;
+	double currentX = 100;
+	double currentY = 100;
 };
 
 Renderer *Renderer::renderer = nullptr;
