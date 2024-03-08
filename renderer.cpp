@@ -85,9 +85,16 @@ void Renderer::render(const Cairo::RefPtr<Cairo::Context> &context, int width, i
 	{
 		stroke(context);
 	}
+	resetCoordinate();
 	std::cout << "      end rendering:" << std::endl
 			  << std::endl;
 	context->restore();
+}
+
+void Renderer::resetCoordinate()
+{
+	currentX = startingX;
+	currentY = startingY;
 }
 
 Renderer *Renderer::get()
