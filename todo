@@ -1,0 +1,16 @@
+basic functionality 
+    [x] - simple commands interpreter 
+    [x] - simple commands render 
+    []  - tab sensitive
+    []  - main func 
+    []  - procedures
+    []  - error info
+ide:
+
+
+additiona:
+    [] - add nameSpces 
+    [] - think on how to better connect tokens to funtions
+
+ut:
+    [] - wordTree
