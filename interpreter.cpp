@@ -7,7 +7,8 @@
 #include <variant>
 #include "renderer.cpp"
 #include "interpreter.hpp"
-
+#include "wordTree.hpp"
+#include "token.hpp"
 Interpreter::~Interpreter()
 {
     if (fileStream)
@@ -31,7 +32,7 @@ void Interpreter::openFile()
     fileStream = std::move(file);
 }
 
-std::pair<int, int> Interpreter::getWordPos(Buffer_t buffer, int bufferSize, int startPos)
+std::pair<int, int> Interpreter::getWordPos(Buffer_t buffer, int bufferSize, int startPos) // todo to remove
 {
     if (startPos >= bufferSize)
     {
@@ -57,7 +58,7 @@ std::pair<int, int> Interpreter::getWordPos(Buffer_t buffer, int bufferSize, int
     return {startPos, pos};
 }
 // todo use more efficient way of determining if word is string
-Token_t Interpreter::tokenize(std::string word)
+Token_t2 Interpreter::tokenize(std::string word)
 {
     try
     {
@@ -79,64 +80,91 @@ Token_t Interpreter::tokenize(std::string word)
             return command::lt;
     }
 
-    return Token_t();
+    return Token_t2();
+}
+
+int Interpreter::getSpacesAmount(Buffer_t &buffer, int startPos, int endPos) // todo add proper tab recognicion now only works with spaces
+{
+    for (int pos = startPos; pos < endPos; pos++)
+    {
+        if (buffer[pos] != ' ')
+        {
+            return pos;
+        }
+    }
+    return endPos;
+}
+
+void Interpreter::fillWordTree()
+{
+    wordTree.addToken(command::bc, "bc");
+    wordTree.addToken(command::bk, "bk");
+    wordTree.addToken(command::fd, "fd");
+    wordTree.addToken(command::lt, "lt");
+    wordTree.addToken(command::rt, "tr");
+}
+
+void Interpreter::sendToRenderer(std::queue<Token_t> &queue)
+{
+    auto renderer = Renderer::get();
+    while (!queue.empty())
+    {
+        Token_t token = queue.front();
+        queue.pop();
+        switch (token.index())
+        {
+        case 0: // modify this case so it works with multi params proc and float
+            if (!queue.empty() and queue.front().index() == 1)
+            {
+                int val = std::get<int>(queue.front());
+                queue.pop();
+                switch (std::get<command>(token))
+                {
+                case command::bk:
+                    renderer->goDown(val);
+                    break;
+                case command::fd:
+                    renderer->goUp(val);
+                    break;
+                case command::lt:
+                    renderer->goLeft(val);
+                    break;
+                case command::rt:
+                    renderer->goRight(val);
+                    break;
+
+                default:
+                    break;
+                }
+            }
+            break;
+        default:
+            std::cout << "wrong token at wrong time" << std::endl;
+            break;
+        }
+    }
 }
 
 void Interpreter::interpret()
 {
     Buffer_t buffer;
-    // add error handling
-    std::stack<Token_t> stack;
-    command c;
+    std::queue<Token_t> queue;
     bool after = false;
     while (fileStream.value().getline(&buffer[0], buffer.size()))
     {
-        int pos = 0;
+        int lineSize = fileStream.value().gcount();
+        auto tab = getSpacesAmount(buffer, 0, lineSize);
+        // todo refactoring
         while (true)
         {
-            // todo extract this to func
-            auto [wordStart, wordEnd] = getWordPos(buffer, fileStream.value().gcount(), pos);
-            if (wordEnd == -1)
+            auto [token, pos] = wordTree.getToken(std::string_view(buffer.data()), tab, lineSize);
+            queue.push(token);
+            if (pos == lineSize)
             {
                 break;
             }
-            std::cout << "<" << std::string(buffer.data() + wordStart, buffer.data() + wordEnd) << ">" << std::endl;
-            pos = wordEnd + 1;
-            //==
-            auto word = std::string(buffer.data() + wordStart, buffer.data() + wordEnd);
-            try
-            {
-                int number = std::stoi(word);
-                auto renderer = Renderer::get();
-                switch (c)
-                {
-                    case command::fd:
-                        renderer->goUp(number);
-                        break;
-                    case command::bk:
-                        renderer->goDown(number);
-                        break;
-                    case command::lt:
-                        renderer->goLeft(number);
-                        break;
-                    case command::rt:
-                        renderer->goRight(number);
-                        break;
-                }
-            }
-            catch (const std::exception &e)
-            {
-                if (word == "fd")
-                    c = command::fd;
-                else if (word == "bk")
-                    c = command::bk;
-                else if (word == "bc")
-                    c = command::bc;
-                else if (word == "rt")
-                    c = command::rt;
-                else if (word == "lt")
-                    c = command::lt;
-            }
+            tab = getSpacesAmount(buffer, pos, lineSize);
         }
     }
+    sendToRenderer(queue);
 }

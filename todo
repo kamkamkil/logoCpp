@@ -11,6 +11,7 @@ ide:
 additiona:
     [] - add nameSpces 
     [] - think on how to better connect tokens to funtions
+        [] - create map that hold that connection
 
 ut:
     [] - wordTree
